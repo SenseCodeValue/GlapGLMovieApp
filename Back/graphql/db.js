@@ -1,50 +1,45 @@
-export let movies = [
-    {
-        id : 0,
-        name : "starwars-1",
-        score : 1
-    },
-    {
-        id: 1,
-        name : "Avengers",
-        score : 8
-    },
-    {
-        id: 2,
-        name : "The GodFather",
-        score : 9  
-    },
-    {
-        id: 3,
-        name : "Logan",
-        score : 7
-    },
-]
+import axios from 'axios';
+const BASE_URL = "https://yts.am/api/v2/";
+const LIST_MOVIES_URL = `${BASE_URL}list_movies.json`;
+const MOVIE_DETAILS_URL = `${BASE_URL}movie_details.json`;
+const MOVIE_SUGGESTIONS_URL = `${BASE_URL}movie_suggestions.json`;
 
+export const getMovies = async (limit, rating) => {
+    const {data : {
+        data: {movies}
+    }} = await axios(LIST_MOVIES_URL, {
+        params:{
+            limit,
+            minimum_rating: rating
+        }
+    });
+    //위에 코드 구조 분해코드로 data를 찾고 그안의 data의 movies를 찾아서
+    return movies;
+};
 
-export const getMovies = () => movies; //interface
-
-export const getById = (id) => {
-    const filteredMovies = movies.filter(movie => movie.id === id);
-    return filteredMovies[0];
+export const getMovie = async id => {
+    const {
+        data: {
+            data : {movie}
+    }} = await axios(MOVIE_DETAILS_URL,{
+        params:{
+            movie_id : id
+        }
+    });
+    return movie;
 }
 
-export const deleteMovie = (id) => {
-    const cleanMovies = movies.filter(movie => movie.id !== id);
-    if(movies.length > cleanMovies.length){
-        movies = cleanMovies;
-        return true;
-    }else{
-        return false;
-    }
-}
-
-export const addMovie = (name, score) => {
-    const newMovie = {
-        id : movies.length,
-        name,
-        score
-    }
-    movies.push(newMovie);
-    return newMovie;
+export const getSuggestions = async id =>{
+    console.log(id);
+    console.log(MOVIE_SUGGESTIONS_URL);
+    //https://yts.mx/api/v2/movie_suggestions.json?movie_id=7893
+    const {
+        data: {
+            data: {movies}
+        }} = await axios(MOVIE_SUGGESTIONS_URL, {
+        params: {
+            movie_id: id
+        }
+    });
+    return movies;
 }
